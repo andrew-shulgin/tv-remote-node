@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <title>Remote</title>
+    <style>
+        body {
+            background: #455A64;
+            margin: 0;
+            padding: 0;
+        }
+
+        #canvas {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            margin: auto;
+            display: block;
+            width: 240px;
+            height: 240px;
+        }
+    </style>
+    <script type="application/javascript" src="raphael.js"></script>
+    <script type="application/javascript">
+        function sendCommand(comm) {
+            var request = new XMLHttpRequest();
+            request.open("GET", "send?token=default&command=" + comm, true);
+            request.send();
+        }
+    </script>
+</head>
+<body>
+<div id="canvas"></div>
+</body>
+<script>
+    var paper = Raphael("canvas", 240, 240), dir_buttons = {}, ok, animationSpeed = 500, touch = false;
+    paper.clear();
+    paper.circle(120, 120, 120).attr({
+        fill: "#607D8B",
+        stroke: "none"
+    });
+    dir_buttons.up = paper.path("M 120 120 L 35 35 A 120 120 0 0 1 205 35 Z").attr({
+        fill: "#607D8B",
+        stroke: "none"
+    });
+    dir_buttons.right = paper.path("M 120 120 L 205 35 A 120 120 0 0 1 205 205 Z").attr({
+        fill: "#607D8B",
+        stroke: "none"
+    });
+    dir_buttons.down = paper.path("M 120 120 L 35 205 A 120 120 0 0 0 205 205 Z").attr({
+        fill: "#607D8B",
+        stroke: "none"
+    });
+    dir_buttons.left = paper.path("M 120 120 L 35 35 A 120 120 0 0 0 35 205 Z").attr({
+        fill: "#607D8B",
+        stroke: "none"
+    });
+    ok = paper.circle(120, 120, 50).attr({
+        fill: "#CFD8DC",
+        stroke: "none"
+    });
+    for (var b in dir_buttons) {
+        if (dir_buttons.hasOwnProperty(b)) {
+            (function (button) {
+                button.node.addEventListener("mouseover", function () {
+                    if (!touch)
+                        button.attr({fill: "#708D9B"});
+                }, true);
+                button.node.addEventListener("mouseout", function () {
+                    if (!touch)
+                        button.attr({fill: "#607D8B"});
+                }, true);
+                button.node.addEventListener("mousedown", function () {
+                    if (!touch)
+                        button.attr({fill: "#506D7B"});
+                }, true);
+                button.node.addEventListener("mouseup", function () {
+                    if (!touch)
+                        button.attr({fill: "#708D9B"});
+                }, true);
+                button.node.addEventListener("touchstart", function () {
+                    touch = true;
+                    button.attr({fill: "#506D7B"});
+                }, true);
+                button.node.addEventListener("touchend", function () {
+                    touch = true;
+                    button.attr({fill: "#607D8B"});
+                }, true);
+            })(dir_buttons[b]);
+        }
+    }
+    dir_buttons.up.node.addEventListener("mousedown", function () {
+        sendCommand("up");
+    });
+    dir_buttons.right.node.addEventListener("mousedown", function () {
+        sendCommand("right");
+    });
+    dir_buttons.down.node.addEventListener("mousedown", function () {
+        sendCommand("down");
+    });
+    dir_buttons.left.node.addEventListener("mousedown", function () {
+        sendCommand("left");
+    });
+    ok.node.addEventListener("mousedown", function () {
+        sendCommand("enter");
+    });
+    ok.node.addEventListener("mouseover", function () {
+        if (!touch)
+            ok.attr({fill: "#DFE8EC"});
+    }, true);
+    ok.node.addEventListener("mouseout", function () {
+        if (!touch)
+            ok.attr({fill: "#CFD8DC"});
+    }, true);
+    ok.node.addEventListener("mousedown", function () {
+        if (!touch)
+            ok.attr({fill: "#BFC8CC"});
+    }, true);
+    ok.node.addEventListener("mouseup", function () {
+        if (!touch)
+            ok.attr({fill: "#DFE8EC"});
+    }, true);
+    ok.node.addEventListener("touchstart", function () {
+        touch = true;
+        ok.attr({fill: "#BFC8CC"});
+    }, true);
+    ok.node.addEventListener("touchend", function () {
+        touch = true;
+        ok.attr({fill: "#CFD8DC"});
+    }, true);
+</script>
+</html>
